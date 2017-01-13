@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("AramBuddy")]
-[assembly: AssemblyDescription("Updated by Wawixs")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("EloBuddy")]
 [assembly: AssemblyProduct("AramBuddy")]
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.3.3.7")]
-[assembly: AssemblyFileVersion("1.3.3.7")]
+[assembly: AssemblyVersion("0.0.1.33")]
+[assembly: AssemblyFileVersion("0.0.1.33")]
