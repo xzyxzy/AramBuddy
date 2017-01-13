@@ -29,12 +29,7 @@ namespace AramBuddy
 {
     internal class Program
     {
-        public static Dictionary<string, string[]> CurrentPatchs = new Dictionary<string, string[]>
-            {
-            {"7.1.1", new []{ "MetaSrc", "LoLSkill", "KoreanBuilds", "Championgg", "User Builds" } },
-            };
-
-        public static List<BuildServices> BuildsServices = new List<BuildServices>();
+        public static List<string> CurrentPatchs = new List<string> { "7.1.1" };
 
         private static string Texturefile = Misc.AramBuddyFolder + "\\temp\\DisableTexture1.dat";
 
@@ -226,11 +221,6 @@ namespace AramBuddy
         {
             try
             {
-                foreach (var p in CurrentPatchs)
-                {
-                    BuildsServices.Add(new BuildServices(p.Key, p.Value));
-                }
-
                 MenuIni = MainMenu.AddMenu("AramBuddy", "AramBuddy");
                 SpellsMenu = MenuIni.AddSubMenu("Spells");
                 MenuIni.AddGroupLabel("AramBuddy Version: " + version);
@@ -238,26 +228,10 @@ namespace AramBuddy
 
                 BuildMenu = MenuIni.AddSubMenu("Current Build");
                 InfoMenu = MenuIni.AddSubMenu("Extra Options");
+
+                var lolversion = BuildMenu.Add("buildpatch", new ComboBox("Select Build Patch: ", 0, CurrentPatchs.ToArray()));
                 
-                var lolversion = BuildMenu.Add("buildpatch", new ComboBox("Select Build Patch: ", 0, BuildsServices.Select(s => s.Patch).ToArray()));
-                var buildsource = BuildMenu.Add("buildsource", new ComboBox("Builds Service: ", 0, BuildsServices[lolversion.CurrentValue].AvailableServices));
-
-                lolversion.OnValueChange += delegate(ValueBase<int> sender, ValueBase<int>.ValueChangeArgs args)
-                    {
-                        foreach (var i in BuildsServices[args.OldValue].AvailableServices)
-                        {
-                            buildsource.Remove(i);
-                        }
-                        foreach (var i in BuildsServices[args.NewValue].AvailableServices)
-                        {
-                            buildsource.Add(i);
-                        }
-                    };
-
-                BuildMenu.AddLabel("MetaSrc: Very Good For Aram");
-                BuildMenu.AddLabel("Championgg: Decent For Aram");
-                BuildMenu.AddLabel("KoreanBuilds: Decent For Aram");
-                BuildMenu.AddLabel("LoLSkill: Not Good For Aram");
+                BuildMenu.AddLabel($"Current Build: {lolversion.SelectedText}");
 
                 var debug = MenuIni.CreateCheckBox("debug", "Enable Debugging Mode");
                 var activator = MenuIni.CreateCheckBox("activator", "Enable Built-In Activator");

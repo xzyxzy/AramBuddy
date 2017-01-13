@@ -133,7 +133,7 @@ namespace AramBuddy.Plugins.AutoShop
             catch (Exception ex)
             {
                 // if faild to create build terminate the AutoShop
-                Logger.Send("Failed to create Build from service " + Config.CurrentBuildService + " " + Config.CurrentPatchUsed + " for " + Player.Instance.ChampionName, Logger.LogLevel.Error);
+                Logger.Send($"Failed to create Build from service {Config.CurrentPatchUsed} for {Player.Instance.ChampionName}", Logger.LogLevel.Error);
                 Logger.Send(ex.InnerException?.Message, Logger.LogLevel.Error);
                 Logger.Send("Trying To Get Defualt Build !", Logger.LogLevel.Warn);
                 Setup.UseDefaultBuild();
