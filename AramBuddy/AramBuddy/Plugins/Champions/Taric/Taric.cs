@@ -36,13 +36,15 @@ namespace AramBuddy.Plugins.Champions.Taric
         {
             if (sender == null || !sender.IsEnemy || !sender.IsKillable(E.Range) || !E.IsReady())
                 return;
-
-            E.Cast(sender,HitChance.High);
+            if (Spell != null)
+            {
+                E.Cast(sender, HitChance.High);
+            }
         }
 
         public override void Active()
         {
-            if (AutoMenu.CheckBoxValue("AutoRteam") && TeamFight)
+            if (AutoMenu.CheckBoxValue("AutoRteam") && TeamFight && Spell != null)
             {
                 R.Cast();
             }
