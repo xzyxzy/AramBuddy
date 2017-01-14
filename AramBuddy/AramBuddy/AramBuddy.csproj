@@ -39,14 +39,14 @@
     </Reference>
     <Reference Include="EloBuddy.Sandbox, Version=1.0.6084.36269, Culture=neutral, PublicKeyToken=d671ef5d8e7e69a5, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\New folder\EloBuddy\System\EloBuddy.Sandbox.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\EloBuddy\System\EloBuddy.Sandbox.dll</HintPath>
     </Reference>
     <Reference Include="EloBuddy.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6b574a82b1ea937e, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\New folder\EloBuddy\System\EloBuddy.SDK.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\EloBuddy\System\EloBuddy.SDK.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\EloBuddy\System\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SharpDX">
@@ -111,6 +111,7 @@
     <Compile Include="Plugins\Champions\Syndra\Syndra.cs" />
     <Compile Include="Plugins\Champions\Caitlyn\Caitlyn.cs" />
     <Compile Include="Plugins\Champions\Taliyah\Taliyah.cs" />
+    <Compile Include="Plugins\Champions\Taric\Taric.cs" />
     <Compile Include="Plugins\Champions\Temp.cs" />
     <Compile Include="Plugins\Champions\TwistedFate\TwistedFate.cs" />
     <Compile Include="CheckVersion.cs" />
