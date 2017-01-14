@@ -42,7 +42,7 @@ namespace AramBuddy.MainCore.Common
             }
             Console.WriteLine(text + str);
             Console.ResetColor();
-            Misc.SaveLogs(text + str, Misc.AramBuddyDirectories.AramBuddyLogs);
+            //Misc.SaveLogs(text + str, Misc.AramBuddyDirectories.AramBuddyLogs);
             return true;
         }
 
@@ -72,7 +72,7 @@ namespace AramBuddy.MainCore.Common
             Console.WriteLine(text + str);
             Console.WriteLine(ex);
             Console.ResetColor();
-            Misc.SaveLogs(text + str, Misc.AramBuddyDirectories.AramBuddyLogs);
+            //Misc.SaveLogs(text + str, Misc.AramBuddyDirectories.AramBuddyLogs);
         }
     }
 }

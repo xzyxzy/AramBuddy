@@ -315,6 +315,7 @@ namespace AramBuddy
 
                 Safe.IsVisible = false; // disabled
                 corkibomb.IsVisible = false; // disable for now
+                logs.IsVisible = false; // disabled kappa
 
                 SpellsMenu.AddGroupLabel("Built-In Casting Logic:");
                 SpellsMenu.CreateCheckBox("combo", "Use Spells in Combo Mode");

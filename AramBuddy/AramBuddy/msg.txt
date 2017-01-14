@@ -1,1 +1,1 @@
-Bugfixes
+Disabled the option to save logs temporary
