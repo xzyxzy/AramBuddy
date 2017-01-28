@@ -34,20 +34,14 @@ namespace AramBuddy.Plugins.Champions.Taric
 
         private static void Interrupter_OnInterruptableSpell(Obj_AI_Base sender, Interrupter.InterruptableSpellEventArgs e)
         {
-            if (sender == null || !sender.IsEnemy || !sender.IsKillable(E.Range) || !E.IsReady())
+            if (E == null || sender == null || !sender.IsEnemy || !sender.IsKillable(E.Range) || !E.IsReady())
                 return;
-            if (Spell != null)
-            {
-                E.Cast(sender, HitChance.High);
-            }
+
+            E.Cast(sender, HitChance.High);
         }
 
         public override void Active()
         {
-            if (AutoMenu.CheckBoxValue("AutoRteam") && TeamFight && Spell != null)
-            {
-                R.Cast();
-            }
         }
 
         public override void Combo()
@@ -56,7 +50,7 @@ namespace AramBuddy.Plugins.Champions.Taric
             if (target == null || !target.IsKillable(E.Range))
                 return;
 
-            foreach (var spell in SpellList.Where(s => s.IsReady() && target.IsKillable(s.Range) && ComboMenu.CheckBoxValue(s.Slot)))
+            foreach (var spell in SpellList.Where(s => s != null && s.IsReady() && target.IsKillable(s.Range) && ComboMenu.CheckBoxValue(s.Slot)))
             {
                 spell.Cast(target);
             }
@@ -68,7 +62,7 @@ namespace AramBuddy.Plugins.Champions.Taric
             if (target == null || !target.IsKillable(E.Range))
                 return;
 
-            foreach (var spell in SpellList.Where(s => s.IsReady() && target.IsKillable(s.Range) && HarassMenu.CheckBoxValue(s.Slot) && HarassMenu.CompareSlider(s.Slot + "mana", user.ManaPercent)))
+            foreach (var spell in SpellList.Where(s => s != null && s.IsReady() && target.IsKillable(s.Range) && HarassMenu.CheckBoxValue(s.Slot) && HarassMenu.CompareSlider(s.Slot + "mana", user.ManaPercent)))
             {
                 spell.Cast(target);
             }
@@ -76,15 +70,6 @@ namespace AramBuddy.Plugins.Champions.Taric
 
         public override void LaneClear()
         {
-            foreach (var target in EntityManager.MinionsAndMonsters.EnemyMinions.Where(m => m != null && m.IsKillable(1000)))
-            {
-                foreach (
-                    var spell in
-                        SpellList.Where(s => s.IsReady() && target.IsKillable(s.Range) && LaneClearMenu.CheckBoxValue(s.Slot) && LaneClearMenu.CompareSlider(s.Slot + "mana", user.ManaPercent)))
-                {
-                    spell.Cast(target);
-                }
-            }
         }
 
         public override void Flee()
@@ -93,11 +78,11 @@ namespace AramBuddy.Plugins.Champions.Taric
 
         public override void KillSteal()
         {
-            foreach (var spell in SpellList.Where(s => s.IsReady() && KillStealMenu.CheckBoxValue(s.Slot)))
+            if (E.IsReady() && KillStealMenu.CheckBoxValue(E.Slot))
             {
-                foreach (var target in EntityManager.Heroes.Enemies.Where(m => m != null && m.IsKillable(spell.Range) && spell.WillKill(m)))
+                foreach (var target in EntityManager.Heroes.Enemies.Where(m => E.WillKill(m) && m.IsKillable(E.Range)))
                 {
-                    spell.Cast(target);
+                    E.Cast(target, 45);
                 }
             }
         }

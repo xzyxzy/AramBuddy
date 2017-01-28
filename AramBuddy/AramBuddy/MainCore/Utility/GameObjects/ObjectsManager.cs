@@ -520,7 +520,7 @@ namespace AramBuddy.MainCore.Utility.GameObjects
         {
             get
             {
-                if (Orbwalker.SupportMode)
+                if (Orbwalker.SupportMode || !Misc.SafeToAttack)
                     return null;
 
                 var lasthitableminion =

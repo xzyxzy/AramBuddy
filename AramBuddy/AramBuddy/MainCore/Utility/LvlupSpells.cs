@@ -47,6 +47,7 @@ namespace AramBuddy.MainCore.Utility
             {
                 Logger.Send($"ERROR Failed to create level set for {Player.Instance.ChampionName}", ex, Logger.LogLevel.Error);
             }
+
             Game.OnTick += Game_OnTick;
         }
 
@@ -55,19 +56,17 @@ namespace AramBuddy.MainCore.Utility
             try
             {
                 var result = Weeb.ReadString(FileURL).Result;
-
-                if (string.IsNullOrEmpty(result))
-                {
-                    Logger.Send("Failed to create Levelset.", Logger.LogLevel.Warn);
-                    Logger.Send("Wrong response, or request was cancelled.", Logger.LogLevel.Warn);
-                    return;
-                }
                 
-                if (result.Contains("LevelSet"))
+                if (!string.IsNullOrEmpty(result) && result.Contains("LevelSet"))
                 {
                     File.WriteAllText(LevelSetFile, result);
                     TryParseData(result, out CurrentLevelset);
                     Logger.Send($"Created LevelSet For {Player.Instance.ChampionName}");
+                }
+                else
+                {
+                    Logger.Send("Failed to create Levelset.", Logger.LogLevel.Warn);
+                    Logger.Send("Wrong response, or request was cancelled.", Logger.LogLevel.Warn);
                 }
             }
             catch (Exception ex)
@@ -100,27 +99,31 @@ namespace AramBuddy.MainCore.Utility
             var level = new[] { 0, 0, 0, 0 };
             if (qL + wL + eL + rL < Player.Instance.Level)
             {
-                int[] LevelSet = CurrentLevelset.LevelsetData;
+                int[] LevelSet = CurrentLevelset?.LevelsetData;
 
-                if (LevelSet == null)
+                if (CurrentLevelset == null || LevelSet == null)
                 {
+                    CurrentLevelset = new Levelset();
+
                     if (Player.Instance.ChampionName.Equals("Ryze"))
                     {
-                        LevelSet = MaxRyze;
+                        CurrentLevelset.LevelsetData = MaxRyze;
                     }
 
                     if (MaxQChampions.Any(s => s.Equals(Player.Instance.ChampionName, StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        LevelSet = MaxQSequence;
+                        CurrentLevelset.LevelsetData = MaxQSequence;
                     }
                     if (MaxWChampions.Any(s => s.Equals(Player.Instance.ChampionName, StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        LevelSet = MaxWSequence;
+                        CurrentLevelset.LevelsetData = MaxWSequence;
                     }
                     if (MaxEChampions.Any(s => s.Equals(Player.Instance.ChampionName, StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        LevelSet = MaxESequence;
+                        CurrentLevelset.LevelsetData = MaxESequence;
                     }
+
+                    LevelSet = CurrentLevelset.LevelsetData;
                 }
 
                 for (var i = 0; i < Player.Instance.Level; i++)
@@ -216,7 +219,7 @@ namespace AramBuddy.MainCore.Utility
     /// </summary>
     private static readonly List<string> MaxQChampions = new List<string>
         {
-            "Ahri", "Akali", "Alistar", "Amumu", "Annie", "Ashe", "Azir", "Blitzcrank", "Bard", "Braum", "Caitlyn", "Cassiopeia", "ChoGath",
+            "Ahri", "Akali", "Alistar", "Amumu", "Annie", "Ashe", "Azir", "Blitzcrank", "Bard", "Braum", "Caitlyn", "Cassiopeia", "Camille", "ChoGath",
             "Corki", "Darius", "Diana", "DrMundo", "Draven", "Elise", "Ekko", "Evelynn", "Ezreal", "Fiora", "Fizz", "Galio", "Gangplank", "Gnar",
             "Gragas", "Graves", "Hecarim", "Heimerdinger", "Illaoi", "Irelia", "Ivern", "Janna", "JarvanIV", "Jax", "Jayce", "Jhin", "Jinx", "Karma", "Karthus",
             "Kassadin", "Katarina", "Kennen", "KhaZix", "Kindred", "Kled", "Leblanc", "LeeSin", "Leona", "Lissandra", "Lucian", "Lulu", "Malphite",

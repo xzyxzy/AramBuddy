@@ -29,7 +29,7 @@ namespace AramBuddy
 {
     internal class Program
     {
-        public static List<string> CurrentPatchs = new List<string> { "7.1.1" };
+        public static List<string> CurrentPatchs = new List<string> { "7.2.1", "7.1.1" };
 
         private static string Texturefile = Misc.AramBuddyFolder + "\\temp\\DisableTexture1.dat";
 
@@ -421,7 +421,6 @@ namespace AramBuddy
                 var SafeToDive = " | SafeToDive: " + Misc.SafeToDive;
                 var castingimportantspell = " | IsCastingImportantSpell: " + MainCore.Logics.Casting.SpecialChamps.IsCastingImportantSpell;
                 var lagging = " | Lagging: " + Brain.Lagging;
-                var normalbing = " | NormalPing: " + Brain.NormalPing;
                 var SafeToAttack = " | SafeToAttack: " + Misc.SafeToAttack;
                 var IsSafe = /*" | IsSafe: " + (Player.Instance.IsSafe() && Pathing.Position.IsSafe())*/ "";
                 var LastTeamFight = " | LastTeamFight: " + (int)(Core.GameTickCount - Brain.LastTeamFight);
@@ -433,7 +432,7 @@ namespace AramBuddy
                     AllyTeamTotal + EnemyTeamTotal + "\n"
                     + ActiveMode + Alone + AttackObject + "\n"
                     + SafeToDive + SafeToAttack + IsSafe + "\n"
-                    + castingimportantspell + lagging + normalbing + "\n"
+                    + castingimportantspell + lagging + "\n"
                     + LastTurretAttack + LastTeamFight + "\n"
                     + MovementCommands + MoveTo + "\n"
                     + nextitem + fullbuild + "\n");

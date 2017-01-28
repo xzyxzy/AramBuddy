@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AramBuddy.MainCore.Common;
+using AramBuddy.MainCore.Utility.GameObjects;
 using EloBuddy;
 using EloBuddy.SDK;
 using SharpDX;
@@ -84,7 +85,7 @@ namespace AramBuddy.MainCore.Logics
             if (unit.Unit.IsEnemy)
                 return Core.GameTickCount - unit.LastVisibleTick > 180000f; // not visible for more than 3 minutes
 
-            return Core.GameTickCount - unit.LastCommandTick > 10000f; // Last command more than 10 seconds
+            return Core.GameTickCount - unit.LastCommandTick > 5000f; // Last command more than 5 seconds
         }
 
         public static bool IsAttacking(this Obj_AI_Base caster)
@@ -126,8 +127,12 @@ namespace AramBuddy.MainCore.Logics
                     LastAlliesTeamFightPos = alliesFighting.Select(a => a.ServerPosition).ToList().CenterVectors();
                     LastEnemiesTeamFightPos = enemiesFighting.Select(a => a.ServerPosition).ToList().CenterVectors();
 
+                    var nearestEnemy = ObjectsManager.NearestEnemy;
+
+                    var allyScore = LastAlliesTeamFightPos.TeamTotal() > LastEnemiesTeamFightPos.TeamTotal(true) && nearestEnemy != null && MyHero.Instance.GetScore() > nearestEnemy.GetScore();
+
                     var myfight = MyHero.Instance.CountEnemyAlliesInRangeWithPrediction(Config.SafeValue) >= MyHero.Instance.CountEnemyHeroesInRangeWithPrediction(Config.SafeValue)
-                                  && alliesFighting.Count > 1;
+                                  && (alliesFighting.Count > 1 || allyScore);
 
                     var alliesalive = EntityManager.Heroes.Allies.Count(a => a.IsValidTarget() && a.IsActive());
 
@@ -152,7 +157,7 @@ namespace AramBuddy.MainCore.Logics
             public float LastVisibleTick;
             public float LastCommandTick;
             public float AttackStartTick = Core.GameTickCount;
-            public float AttackEndTick => 200 + this.AttackStartTick + (this.Unit.AttackDelay + this.Unit.AttackCastDelay) * 1000f;
+            public float AttackEndTick => Game.Ping + this.AttackStartTick + (this.Unit.AttackDelay + this.Unit.AttackCastDelay) * 1000f;
             public bool Ended => this.AttackEndTick - Core.GameTickCount < 0;
             public bool IsAttacking => !this.Ended;
         }

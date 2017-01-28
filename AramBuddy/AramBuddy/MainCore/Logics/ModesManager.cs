@@ -181,8 +181,8 @@ namespace AramBuddy.MainCore.Logics
         {
             get
             {
-                return (Misc.SafeToAttack && Player.Instance.IsSafe() && Player.Instance.CountEnemyHeros(SafeValue) > 0
-                    && (Core.GameTickCount - Brain.LastTeamFight < 1500)) || Player.Instance.IsZombie();
+                return (Misc.SafeToAttack && Player.Instance.IsSafe() && Player.Instance.CountEnemyHeros(SafeValue) > 0 && (Player.Instance.AlliesMoreThanEnemies(SafeValue) || Player.Instance.TeamTotal() > Player.Instance.TeamTotal(true))
+                    && (Brain.TeamFightActive)) || Player.Instance.IsZombie();
             }
         }
 
@@ -193,7 +193,7 @@ namespace AramBuddy.MainCore.Logics
         {
             get
             {
-                return Core.GameTickCount - Brain.LastTeamFight > 1500 && Misc.SafeToAttack && Player.Instance.IsSafe() && Player.Instance.CountEnemyHeros(SafeValue) > 0
+                return !Brain.TeamFightActive && Misc.SafeToAttack && Player.Instance.IsSafe() && Player.Instance.CountEnemyHeros(SafeValue) > 0
                     && ((Player.Instance.IsUnderHisturret() && EntityManager.Heroes.Enemies.Any(e => e.IsKillable(SafeValue) && e.UnderEnemyTurret()))
                         || EntityManager.Heroes.Enemies.Where(e => e.IsKillable()).All(e => e.Distance(Player.Instance) > (SafeValue > 400 ? SafeValue - 400 : 400))
                         || Player.Instance.PredictPosition().TeamTotal(true) > Player.Instance.PredictPosition().TeamTotal()
@@ -209,7 +209,7 @@ namespace AramBuddy.MainCore.Logics
             get
             {
                 var player = Player.Instance;
-                var noteamfight = Core.GameTickCount - Brain.LastTeamFight > 1500 || AttackObject;
+                var noteamfight = !Brain.TeamFightActive || AttackObject;
                 var safetoattack = Misc.SafeToAttack && player.IsSafe();
                 var safePosition = player.PredictHealthPercent() > 10 || player.CountEnemyHeroesInRangeWithPrediction(SafeValue) == 0 || player.AlliesMoreThanEnemies(SafeValue) || player.TeamTotal() > player.TeamTotal(true);
                 var someoneTanking = player.CountAllyMinionsInRangeWithPrediction(SafeValue) > 0 || player.CountEnemyAlliesInRangeWithPrediction(SafeValue) > 1 || player.IsUnderHisturret();
@@ -226,8 +226,8 @@ namespace AramBuddy.MainCore.Logics
         {
             get
             {
-                return !Player.Instance.IsUnderHisturret() && (Player.Instance.EnemiesMoreThanAllies() && Player.Instance.PredictHealthPercent() < 60
-                    && Player.Instance.PredictPosition().TeamTotal(true) > Player.Instance.PredictPosition().TeamTotal() || !Player.Instance.IsSafe());
+                return !Player.Instance.IsUnderHisturret() && (Player.Instance.EnemiesMoreThanAllies() && Player.Instance.PredictHealthPercent() < 45
+                    && Player.Instance.PredictPosition().TeamTotal(true) > Player.Instance.PredictPosition().TeamTotal() || (!Player.Instance.IsSafe() && (Player.Instance.HealthPercent < 25 || !Misc.SafeToAttack)));
             }
         }
 

@@ -54,48 +54,38 @@ namespace AramBuddy.MainCore.Common
             {
                 EnemyTeamTotal = TeamDamage(Position, true);
                 AllyTeamTotal = TeamDamage(Position);
-                var Allies = EntityManager.Heroes.AllHeroes.Where(e => e.IsValidTarget() && (e.IsInRange(Position, Config.SafeValue) || e.IsMe));
+                var Allies = EntityManager.Heroes.Allies.Where(e => !e.IsAFK() && e.IsValid && !e.IsDead && (e.IsInRange(Position, Config.SafeValue) || e.IsMe));
 
                 foreach (var t in Allies)
                 {
-                    AllyTeamTotal += t.Health * 0.25f;
-                    AllyTeamTotal += t.Mana * 0.1f;
-                    AllyTeamTotal += t.Armor;
-                    AllyTeamTotal += t.SpellBlock;
-                    AllyTeamTotal += t.GetAutoAttackDamage(Player.Instance, true);
-                    AllyTeamTotal += t.GetAllSpellsDamage(MyHero.Instance);
+                    AllyTeamTotal += t.GetScore();
                 }
 
                 var Aturrets = EntityManager.Turrets.Allies.Where(t => t.IsValidTarget() && t.IsInRange(Position, t.GetAutoAttackRange(Player.Instance)));
 
                 foreach (var t in Aturrets)
                 {
-                    AllyTeamTotal += t.Health * 0.2f;
+                    AllyTeamTotal += t.Health * 0.45f;
                     AllyTeamTotal += t.Armor;
                     AllyTeamTotal += t.SpellBlock;
-                    AllyTeamTotal += t.GetAutoAttackDamage(Player.Instance, true);
+                    AllyTeamTotal += t.GetAutoAttackDamage(Player.Instance) * 2;
                 }
 
-                var Enemies = EntityManager.Heroes.Enemies.Where(e => e.IsValidTarget() && e.IsInRange(Position, Config.SafeValue));
+                var Enemies = EntityManager.Heroes.Enemies.Where(e => !e.IsAFK() && e.IsValid && !e.IsDead && e.IsInRange(Position, Config.SafeValue));
 
                 foreach (var t in Enemies)
                 {
-                    EnemyTeamTotal += t.Health * 0.25f;
-                    EnemyTeamTotal += t.Mana * 0.1f;
-                    EnemyTeamTotal += t.Armor;
-                    EnemyTeamTotal += t.SpellBlock;
-                    EnemyTeamTotal += t.GetAutoAttackDamage(Player.Instance, true);
-                    EnemyTeamTotal += t.GetAllSpellsDamage(MyHero.Instance);
+                    EnemyTeamTotal += t.GetScore();
                 }
 
                 var Eturrets = EntityManager.Turrets.Enemies.Where(t => t.IsValidTarget() && t.IsInRange(Position, t.GetAutoAttackRange(Player.Instance)));
 
                 foreach (var t in Eturrets)
                 {
-                    EnemyTeamTotal += t.Health * 0.2f;
+                    EnemyTeamTotal += t.Health * 0.45f;
                     EnemyTeamTotal += t.Armor;
                     EnemyTeamTotal += t.SpellBlock;
-                    EnemyTeamTotal += t.GetAutoAttackDamage(Player.Instance, true);
+                    EnemyTeamTotal += t.GetAutoAttackDamage(Player.Instance) * 2;
                 }
 
                 lastTeamTotalupdate = Core.GameTickCount;
@@ -121,6 +111,21 @@ namespace AramBuddy.MainCore.Common
             {
                 result += hero.GetAllSpellsDamage(Player.Instance);
             }
+
+            return result;
+        }
+
+        public static float GetScore(this AIHeroClient t)
+        {
+            var result = 0f;
+            result += t.Health * 0.35f;
+            result += t.Mana * 0.15f;
+            result += t.Armor;
+            result += t.SpellBlock;
+            result += t.GetAutoAttackDamage(Player.Instance, true) * 2;
+            result += t.GetAllSpellsDamage(MyHero.Instance);
+            result += t.TotalAttackDamage;
+            result += t.TotalMagicalDamage;
 
             return result;
         }
@@ -151,7 +156,7 @@ namespace AramBuddy.MainCore.Common
                 var turret = ObjectsManager.EnemyTurret;
 
                 var attackrange = turret?.GetAutoAttackRange(Player.Instance) ?? 0;
-                return Player.Instance.IsZombie() || turret != null && Player.Instance.PredictHealthPercent() > 15 && Core.GameTickCount - MyHero.LastTurretAttack > 3000
+                return Player.Instance.IsZombie() || turret != null && Player.Instance.PredictHealthPercent() > 15 && !MyHero.TurretAttackingMe
                        && (turret.CountAllyMinionsInRangeWithPrediction((int)attackrange) > 2 || turret.CountAllyHeros((int)attackrange) > 1
                        || (turret.TrackedUnit() != null && turret.TrackedUnit().IsAttacking && turret.TrackedUnit().Target != null && !turret.TrackedUnit().Target.IsMe && turret.TrackedUnit().Target.IsChampion()));
             }
@@ -165,9 +170,9 @@ namespace AramBuddy.MainCore.Common
             get
             {
                 var turret = ObjectsManager.EnemyTurret;
-                return Core.GameTickCount - MyHero.LastTurretAttack > 3000
+                return Player.Instance.IsZombie() || !Player.Instance.IsKillable() || !MyHero.TurretAttackingMe
                     && (Player.Instance.ServerPosition.SafeDive() || turret?.LastTarget() != null && turret.LastTarget().IsChampion() && !turret.LastTarget().IsMe);
-            }   
+            }
         }
 
         /// <summary>
@@ -611,6 +616,7 @@ namespace AramBuddy.MainCore.Common
         
         public static void SaveLogs(string str, AramBuddyDirectories Directory)
         {
+            return;
             var dir = AramBuddyFolder + "\\Logs";
             switch (Directory)
             {

@@ -179,7 +179,7 @@ namespace AramBuddy.MainCore.Logics
             }
 
             // Moves to AllySpawn if the bot is diving and it's not safe to dive.
-            if (((Player.Instance.UnderEnemyTurret() && !SafeToDive) || Core.GameTickCount - MyHero.LastTurretAttack < 2000) && ObjectsManager.AllySpawn != null)
+            if (((Player.Instance.UnderEnemyTurret() && !SafeToDive) || MyHero.TurretAttackingMe) && ObjectsManager.AllySpawn != null)
             {
                 Program.Moveto = "AllySpawn2";
                 Position = ObjectsManager.AllySpawn.Position.Random();
@@ -205,7 +205,7 @@ namespace AramBuddy.MainCore.Logics
 
             // if there is a TeamFight follow NearestEnemy.
             var NearestEnemy = ObjectsManager.NearestEnemy;
-            if (Core.GameTickCount - Brain.LastTeamFight < 2000 && Player.Instance.PredictHealthPercent() > 20 && !(ModesManager.CurrentMode == ModesManager.Modes.None || ModesManager.CurrentMode == ModesManager.Modes.Flee)
+            if (Brain.TeamFightActive && Player.Instance.PredictHealthPercent() > 20 && !(ModesManager.CurrentMode == ModesManager.Modes.None || ModesManager.CurrentMode == ModesManager.Modes.Flee)
                 && NearestEnemy != null && NearestEnemy.TeamTotal() >= NearestEnemy.TeamTotal(true)
                 && NearestEnemy.CountAllyHeros(SafeValue) > 1)
             {
@@ -381,7 +381,7 @@ namespace AramBuddy.MainCore.Logics
             var NearestEnemy = ObjectsManager.NearestEnemy;
 
             // TeamFighting Logic.
-            if (NearestEnemy != null && Core.GameTickCount - Brain.LastTeamFight < 1500 && MyHero.Instance.PredictHealthPercent() > 15
+            if (NearestEnemy != null && Brain.TeamFightActive && MyHero.Instance.PredictHealthPercent() > 15
                 && !(ModesManager.CurrentMode == ModesManager.Modes.Flee || ModesManager.CurrentMode == ModesManager.Modes.None))
             {
                 var pos = NearestEnemy.KitePos(Detector.LastAlliesTeamFightPos);

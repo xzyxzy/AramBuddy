@@ -30,6 +30,8 @@ namespace AramBuddy.MainCore
 
         public static bool Lagging { get { return Game.Ping > NormalPing * 2; } }
 
+        public static bool TeamFightActive => Core.GameTickCount - LastTeamFight < 1750;
+
         /// <summary>
         ///     Init bot functions.
         /// </summary>
@@ -93,13 +95,13 @@ namespace AramBuddy.MainCore
         /// </summary>
         public static float LastTeamFight;
 
-        public static List<AIHeroClient> DetectedBots = new List<AIHeroClient>();
-
         /// <summary>
         ///     Decisions picking for the bot.
         /// </summary>
         public static void Decisions()
         {
+            Orbwalker.DisableAttacking = !Misc.SafeToAttack && Orbwalker.GetTarget().IsChampion();
+
             // Picks best position for the bot.
             if (Core.GameTickCount - LastUpdate > Misc.ProtectFPS)
             {
@@ -109,20 +111,6 @@ namespace AramBuddy.MainCore
                 Pathing.BestPosition();
                 LastPickPosition = Pathing.Position;
                 LastUpdate = Core.GameTickCount;
-            }
-            
-            foreach (var hero in EntityManager.Heroes.AllHeroes.Where(a => a.IsValidTarget() && !DetectedBots.Contains(a)))
-            {
-                if (ObjectsManager.HealthRelics.Any(hr => hero.Path.LastOrDefault().Distance(hr.Position) <= 3))
-                {
-                    DetectedBots.Add(hero);
-                    //Logger.Send("BOT DETECTED: [" + hero.ChampionName + " - " + hero.Name + "] Case: Dead Center click on HR", Logger.LogLevel.Warn);
-                }
-                if (EntityManager.Heroes.AllHeroes.Count(b => !hero.IdEquals(b) && hero.Distance(b) <= 2) > 0)
-                {
-                    DetectedBots.Add(hero);
-                    //Logger.Send("BOT DETECTED: [" + hero.ChampionName + " - " + hero.Name  + "] Case: Stacked bots", Logger.LogLevel.Warn);
-                }
             }
 
             if (LastPing != Game.Ping)
@@ -137,11 +125,12 @@ namespace AramBuddy.MainCore
                 LastTeamFight = Core.GameTickCount;
             }
 
+            var NearestEnemy = ObjectsManager.NearestEnemy;
             if (Config.FixedKite && !(Program.Moveto.Contains("Enemy") || Program.Moveto.Contains("AllySpawn")) && !(ModesManager.Flee || ModesManager.None)
-                && ObjectsManager.NearestEnemy != null && Pathing.Position.CountEnemyHeros((int)(Misc.KiteDistance(ObjectsManager.NearestEnemy) + Player.Instance.BoundingRadius)) > 0)
+                && NearestEnemy != null && Pathing.Position.CountEnemyHeros(Config.SafeValue * 0.35f) > 0)
             {
                 Program.Moveto = "FixedToKitingPosition";
-                Pathing.Position = ObjectsManager.NearestEnemy.KitePos(ObjectsManager.AllySpawn);
+                Pathing.Position = NearestEnemy.KitePos(ObjectsManager.AllySpawn);
             }
 
             if (Config.TryFixDive && Pathing.Position.UnderEnemyTurret() && !Misc.SafeToDive)
@@ -164,10 +153,9 @@ namespace AramBuddy.MainCore
                 Pathing.Position = ObjectsManager.AllySpawn.Position.Random();
             }
 
-            RunningItDownMid = Config.Tyler1 && Player.Instance.Gold >= Config.Tyler1g && !Player.Instance.IsZombie() && ObjectsManager.EnemySpawn != null && !Buy.FullBuild && Core.GameTickCount - LastTeamFight > 1500
+            RunningItDownMid = Config.Tyler1 && Player.Instance.Gold >= Config.Tyler1g && !Player.Instance.IsZombie() && ObjectsManager.EnemySpawn != null && !Buy.FullBuild && !TeamFightActive
                 && (ObjectsManager.AllySpawn != null && Player.Instance.Distance(ObjectsManager.AllySpawn) > 4000 || EntityManager.Heroes.Enemies.Count(e => !e.IsDead && e.IsValid) == 0)
-                && EntityManager.Heroes.Allies.Count(a => a.IsActive()) > 2 && (Orbwalker.GetTarget() != null
-                && !(Orbwalker.GetTarget().Type == GameObjectType.obj_HQ || Orbwalker.GetTarget().Type == GameObjectType.obj_BarracksDampener) || Orbwalker.GetTarget() == null);
+                && EntityManager.Heroes.Allies.Count(a => a.IsActive()) > 2 && !Program.Moveto.Contains("NearestEnemyObject");
 
             if (RunningItDownMid && ObjectsManager.EnemySpawn != null)
             {
