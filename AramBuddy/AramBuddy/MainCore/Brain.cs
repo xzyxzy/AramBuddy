@@ -100,7 +100,7 @@ namespace AramBuddy.MainCore
         /// </summary>
         public static void Decisions()
         {
-            Orbwalker.DisableAttacking = !Misc.SafeToAttack && Orbwalker.GetTarget().IsChampion();
+            //Orbwalker.DisableAttacking = !Misc.SafeToAttack && Orbwalker.GetTarget().IsChampion();
 
             // Picks best position for the bot.
             if (Core.GameTickCount - LastUpdate > Misc.ProtectFPS)
