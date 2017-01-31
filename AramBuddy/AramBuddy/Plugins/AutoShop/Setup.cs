@@ -80,22 +80,6 @@ namespace AramBuddy.Plugins.AutoShop
                     Builds.Add(parsed, File.ReadAllText(build));
                 }
 
-                if (!Directory.Exists(BuildPath))
-                {
-                    Directory.CreateDirectory(BuildPath);
-                }
-
-                // Loop through all the builds in the build path directory
-                foreach (var build in Directory.GetFiles(BuildPath))
-                {
-                    // Get the name of the champion from the build
-                    var parsed = build.Replace(".json", "").Replace(BuildPath + "\\", "");
-
-                    // Add the build to the Builds dictionary in a ChampionName : BuildData format
-                    if(!Builds.ContainsKey(parsed))
-                        Builds.Add(parsed, File.ReadAllText(build));
-                }
-
                 // Check if there are any builds for our champion
                 if (Builds.Keys.All(b => b.CleanChampionName() != Player.Instance.CleanChampionName()))
                 {
