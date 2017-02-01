@@ -19,8 +19,8 @@ namespace AramBuddy.Plugins.Activator.Cleanse
         private static readonly List<BuffType> BuffsToQss = new List<BuffType>
         {
             BuffType.Blind, BuffType.Charm, BuffType.Fear, BuffType.Flee, BuffType.Knockback, BuffType.Knockup, BuffType.NearSight,
-            BuffType.Poison, BuffType.Polymorph, BuffType.Grounded, BuffType.Slow, BuffType.Snare, BuffType.Silence, BuffType.Stun,
-            BuffType.Suppression, BuffType.Taunt
+            BuffType.Poison, BuffType.Polymorph, BuffType.Slow, BuffType.Snare, BuffType.Silence, BuffType.Stun,
+            BuffType.Suppression, BuffType.Taunt, //BuffType.Grounded
         };
 
         private static Menu Clean;
