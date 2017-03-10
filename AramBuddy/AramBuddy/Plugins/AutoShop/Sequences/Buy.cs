@@ -55,11 +55,14 @@ namespace AramBuddy.Plugins.AutoShop.Sequences
                     return false;
                 }
 
+                var minItem = Config.MinItems;
+                var maxItem = Config.MaxItems;
+
                 if (Player.Instance.IsZombie)
                 {
-                    var rndm = (float)new Random().Next(500, 3000);
+                    var rndm = (float)new Random().Next(500, 1500);
                     Logger.Send("Cant Buy Items! - Case: Zombie, Trying Again After " + (rndm / 1000).ToString("F1") + " Second/s", Logger.LogLevel.Warn);
-                    Core.DelayAction(() => BuyNextItem(build), (int)rndm);
+                    Core.DelayAction(() => BuyNextItem(build), (int)Math.Round(rndm));
                     return false;
                 }
 
@@ -112,8 +115,11 @@ namespace AramBuddy.Plugins.AutoShop.Sequences
                 NextItemValue = theitem.GoldRequired();
                 CurrentItemIndex = GetIndex() + 1;
 
-                var deathtime = Player.Instance.DeathTimer() * 1000;
-                var rnd = (float)(new Random().Next(Math.Max(400, (int)(deathtime * 0.05f)), Math.Max(900, (int)(deathtime * 0.1f))) + Game.Ping);
+                var deathtime = Player.Instance.DeathTimer() * 1000f;
+                var mod = Math.Max(0.05f, 1 - (minItem / maxItem));
+                var rnd = new Random().Next(Game.Ping / 2, (int)Math.Round(deathtime * mod)) + Game.Ping;
+
+                //var rnd = (float)(new Random().Next(Math.Max(400, (int)(deathtime * 0.05f)), Math.Max(900, (int)(deathtime * 0.1f))) + Game.Ping);
 
                 if (!item.Value.AvailableForMap || !item.Value.InStore)
                 {

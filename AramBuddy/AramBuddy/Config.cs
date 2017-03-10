@@ -45,5 +45,7 @@ namespace AramBuddy
 
         //AutoShop things
         public static string CurrentPatchUsed { get { return BuildMenu.Get<ComboBox>("buildpatch").SelectedText; } }
+        public static float MinItems => BuildMenu.SliderValue("minItem");
+        public static float MaxItems => BuildMenu.SliderValue("maxItem");
     }
 }
