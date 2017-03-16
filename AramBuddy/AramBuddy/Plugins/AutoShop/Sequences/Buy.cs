@@ -117,7 +117,7 @@ namespace AramBuddy.Plugins.AutoShop.Sequences
 
                 var deathtime = Player.Instance.DeathTimer() * 1000f;
                 var mod = Math.Max(0.05f, 1 - (minItem / maxItem));
-                var rnd = new Random().Next(Game.Ping / 2, 1200 + Game.Ping;
+                var rnd = new Random().Next(Game.Ping / 2, 1200) + Game.Ping;
 
                 //var rnd = (float)(new Random().Next(Math.Max(400, (int)(deathtime * 0.05f)), Math.Max(900, (int)(deathtime * 0.1f))) + Game.Ping);
 
